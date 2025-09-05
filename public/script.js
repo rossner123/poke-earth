@@ -1,0 +1,70 @@
+const map = L.map("map").setView([-30.0346, -51.2177], 4);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap contributors",
+}).addTo(map);
+
+map.on("click", async function (e) {
+  const { lat, lng } = e.latlng;
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const place =
+      data.address.city ||
+      data.address.town ||
+      data.address.village ||
+      data.display_name;
+
+    const climaRes = await fetch(`/clima/${lat}/${lng}`);
+    const climaData = await climaRes.json();
+    console.log(climaData);
+
+    const descricao = climaData.weather[0].main;
+    const temperatura = climaData.main.temp.toFixed(1);
+    const umidade = climaData.main.humidity;
+    const icone = climaData.weather[0].icon;
+    const iconeUrl = `http://openweathermap.org/img/wn/${icone}@2x.png`;
+
+    const pokeRes = await fetch(`/pokemon/${descricao}`);
+    const pokeData = await pokeRes.json();
+
+    const indice = Math.floor(Math.random() * pokeData.length);
+    const pokemonSprite = pokeData[indice].image;
+    const pokemonName = pokeData[indice].name;
+
+    L.popup()
+      .setLatLng([lat, lng])
+      .setContent(
+        `
+                <div style="text-align:center; font-family:Arial, sans-serif; max-width:200px;">
+                <h3 style="margin:0 0 8px 0; font-size:16px; color:#333;">${place}</h3>
+
+                  <div style="display:flex; align-items:center; justify-content:space-around; margin-bottom:8px;">
+                    <div style="text-align:center;">
+                      <img src="${pokemonSprite}" alt="${pokemonName}" style="width:60px; height:60px;" />
+                      <p style="margin:4px 0 0; font-size:14px; font-weight:bold; text-transform:capitalize;">
+                        ${pokemonName}
+                      </p>
+                    </div>
+
+                    <div style="text-align:center;">
+                      <img src="${iconeUrl}" alt="${descricao}" style="width:40px; height:40px; margin-bottom:2px;" />
+                      <p style="margin:0; font-size:13px; text-transform:capitalize;">${descricao}</p>
+                    </div>
+                  </div>
+
+                  <div style="font-size:13px; line-height:1.5; background:#f4f4f4; padding:6px; border-radius:6px;">
+                    <div>🌡 <b>${temperatura}°C</b></div>
+                    <div>💧 ${umidade}%</div>
+                  </div>
+                </div>
+                `
+      )
+      .openOn(map);
+  } catch (error) {
+    console.error("Erro ao buscar cidade:", error);
+  }
+});
