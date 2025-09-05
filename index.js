@@ -31,6 +31,82 @@ app.get("/clima/:lat/:lon", async (req, res) => {
     }
 })
 
+function tiposDoClima(clima) {
+    let tipos = [];
+
+    switch (clima) {
+        case "Clear":       // Céu limpo
+            tipos = ["fire", "grass"];
+            break;
+        case "Clouds":      // Nuvens
+            tipos = ["normal", "fairy"];
+            break;
+        case "Rain":        // Chuva
+            tipos = ["water", "electric"];
+            break;
+        case "Drizzle":     // Garoa
+            tipos = ["water"];
+            break;
+        case "Thunderstorm":// Tempestade
+            tipos = ["electric", "dark"];
+            break;
+        case "Snow":        // Neve
+            tipos = ["ice"];
+            break;
+        case "Mist":        // Névoa
+        case "Fog":
+        case "Haze":
+            tipos = ["ghost", "psychic"];
+            break;
+        case "Smoke":       // Fumaça
+        case "Ash":         // Cinzas vulcânicas
+            tipos = ["fire", "rock"];
+            break;
+        case "Dust":        // Poeira
+        case "Sand":        // Areia
+            tipos = ["ground", "rock"];
+            break;
+        case "Squall":      // Rajada de vento
+            tipos = ["flying", "electric"];
+            break;
+        case "Tornado":     // Tornado
+            tipos = ["flying", "dragon"];
+            break;
+        default:            // Qualquer outro clima
+            tipos = ["normal"];
+    }
+
+    return tipos;
+}
+
+app.get("/pokemon/:clima", async (req, res) => {
+    const clima = req.params.clima
+    let tipos = tiposDoClima(clima)
+
+      const indice = Math.floor(Math.random() * tipos.length)
+
+    try {
+        const result = await axios.get(`https://pokeapi.co/api/v2/type/${tipos[indice]}`);
+        const pokemons = result.data.pokemon.slice(0, 20);
+
+        const pokemonsComImagem = await Promise.all(
+            pokemons.map(async (p) => {
+                const res = await axios.get(p.pokemon.url);
+                return {
+                    name: res.data.name,
+                    image: res.data.sprites.front_default
+                };
+            })
+        );
+
+        res.json(pokemonsComImagem);
+
+    } catch (error) {
+        console.log(error.message)
+    }
+})
+
+
 app.listen(3000, () => {
     console.log("rodando...")
 })

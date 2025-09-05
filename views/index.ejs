@@ -28,15 +28,12 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-    // Cria o mapa centralizado em Porto Alegre
     const map = L.map("map").setView([-30.0346, -51.2177], 4);
 
-    // Camada de tiles
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors",
     }).addTo(map);
 
-    // Evento de clique no mapa
     map.on("click", async function (e) {
         const { lat, lng } = e.latlng;
         const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
@@ -56,27 +53,37 @@
             const climaData = await climaRes.json()
             console.log(climaData)
 
-            const descricao = climaData.weather[0].description; // ex: "chuva leve"
-            const temperatura = climaData.main.temp.toFixed(1); // °C
-            const umidade = climaData.main.humidity; // %
-            const vento = climaData.wind.speed.toFixed(1); // m/s
-            const icone = climaData.weather[0].icon; // pra mostrar ícone se quiser
+            const descricao = climaData.weather[0].main;
+            const temperatura = climaData.main.temp.toFixed(1);
+            const umidade = climaData.main.humidity;
+            const icone = climaData.weather[0].icon; 
             const iconeUrl = `http://openweathermap.org/img/wn/${icone}@2x.png`;
 
-            // Popup direto no ponto clicado (sem marcador)
+            const pokeRes = await fetch(`/pokemon/${descricao}`)
+            const pokeData = await pokeRes.json()
+
+            const indice = Math.floor(Math.random() * pokeData.length)
+            const pokemonSprite = pokeData[indice].image
+            const pokemonName = pokeData[indice].name
+
             L.popup()
                 .setLatLng([lat, lng])
                 .setContent(`
                     <div style="text-align:center; font-family:Arial, sans-serif;">
                         <h3 style="margin:0 0 5px 0;">${place}</h3>
                         <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:5px;">
+                          <div>
+                          <p>${pokemonName}</p>
+                          <img src="${pokemonSprite}" alt="${descricao}" style="width:50px; height:50px;" />
+                          </div>
+                          <div>
                             <img src="${iconeUrl}" alt="${descricao}" style="width:40px; height:40px;" />
                             <span style="text-transform:capitalize;">${descricao}</span>
+                          </div>
                         </div>
                         <div style="font-size:14px; line-height:1.4;">
                             <div>🌡 Temperatura: ${temperatura}°C</div>
                             <div>💧 Umidade: ${umidade}%</div>
-                            <div>💨 Vento: ${vento} m/s</div>
                         </div>
                     </div>
                 `).openOn(map);
