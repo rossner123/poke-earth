@@ -68,25 +68,31 @@
 
             L.popup()
                 .setLatLng([lat, lng])
-                .setContent(`
-                    <div style="text-align:center; font-family:Arial, sans-serif;">
-                        <h3 style="margin:0 0 5px 0;">${place}</h3>
-                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:5px;">
-                          <div>
-                          <p>${pokemonName}</p>
-                          <img src="${pokemonSprite}" alt="${descricao}" style="width:50px; height:50px;" />
-                          </div>
-                          <div>
-                            <img src="${iconeUrl}" alt="${descricao}" style="width:40px; height:40px;" />
-                            <span style="text-transform:capitalize;">${descricao}</span>
-                          </div>
-                        </div>
-                        <div style="font-size:14px; line-height:1.4;">
-                            <div>🌡 Temperatura: ${temperatura}°C</div>
-                            <div>💧 Umidade: ${umidade}%</div>
-                        </div>
+               .setContent(`
+                <div style="text-align:center; font-family:Arial, sans-serif; max-width:200px;">
+                <h3 style="margin:0 0 8px 0; font-size:16px; color:#333;">${place}</h3>
+
+                  <div style="display:flex; align-items:center; justify-content:space-around; margin-bottom:8px;">
+                    <div style="text-align:center;">
+                      <img src="${pokemonSprite}" alt="${pokemonName}" style="width:60px; height:60px;" />
+                      <p style="margin:4px 0 0; font-size:14px; font-weight:bold; text-transform:capitalize;">
+                        ${pokemonName}
+                      </p>
                     </div>
-                `).openOn(map);
+
+                    <div style="text-align:center;">
+                      <img src="${iconeUrl}" alt="${descricao}" style="width:40px; height:40px; margin-bottom:2px;" />
+                      <p style="margin:0; font-size:13px; text-transform:capitalize;">${descricao}</p>
+                    </div>
+                  </div>
+
+                  <div style="font-size:13px; line-height:1.5; background:#f4f4f4; padding:6px; border-radius:6px;">
+                    <div>🌡 <b>${temperatura}°C</b></div>
+                    <div>💧 ${umidade}%</div>
+                  </div>
+                </div>
+                `)
+              .openOn(map);
         } catch (error) {
             console.error("Erro ao buscar cidade:", error);
         }

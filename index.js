@@ -35,44 +35,44 @@ function tiposDoClima(clima) {
     let tipos = [];
 
     switch (clima) {
-        case "Clear":       // Céu limpo
+        case "Clear":
             tipos = ["fire", "grass"];
             break;
-        case "Clouds":      // Nuvens
+        case "Clouds":
             tipos = ["normal", "fairy"];
             break;
-        case "Rain":        // Chuva
+        case "Rain":
             tipos = ["water", "electric"];
             break;
-        case "Drizzle":     // Garoa
+        case "Drizzle":
             tipos = ["water"];
             break;
-        case "Thunderstorm":// Tempestade
+        case "Thunderstorm":
             tipos = ["electric", "dark"];
             break;
-        case "Snow":        // Neve
+        case "Snow":
             tipos = ["ice"];
             break;
-        case "Mist":        // Névoa
+        case "Mist":
         case "Fog":
         case "Haze":
             tipos = ["ghost", "psychic"];
             break;
-        case "Smoke":       // Fumaça
-        case "Ash":         // Cinzas vulcânicas
+        case "Smoke":
+        case "Ash":
             tipos = ["fire", "rock"];
             break;
-        case "Dust":        // Poeira
-        case "Sand":        // Areia
+        case "Dust":
+        case "Sand":
             tipos = ["ground", "rock"];
             break;
-        case "Squall":      // Rajada de vento
+        case "Squall":
             tipos = ["flying", "electric"];
             break;
-        case "Tornado":     // Tornado
+        case "Tornado":
             tipos = ["flying", "dragon"];
             break;
-        default:            // Qualquer outro clima
+        default:
             tipos = ["normal"];
     }
 
